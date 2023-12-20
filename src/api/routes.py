@@ -20,3 +20,36 @@ def handle_hello():
     }
 
     return jsonify(response_body), 200
+
+@api.route("/login", methods=["POST"])
+def login():
+    email = request.json.get("email", None)
+    password = request.json.get("password", None)
+
+    user = User.query.filter_by(email=email).first()
+    print(user)
+
+    if user == None:
+        return jsonify({"msg":"Could not find email"}), 401
+    if email != user.email or password != user.password:
+        return jsonify({"msg": "Wrong email or password"}), 401
+    access_token = create_access_token(identity=email)
+    return jsonify(access_token=access_token)
+
+@api.route("/signup", methods=["POST"])
+def signup():
+    body = request.get_jason()
+    print(body)
+
+    user = User.query.filter_by(email=body["email"]).first()
+    print(user)
+    if user == None:
+        user = User(email=body["email"], password=body["password"], is_active=True)
+        db.session.add(user)
+        db.session.commit()
+        response_body ={
+            "msg": "User created suscessfully"
+         }
+        return jsonify(response_body), 200
+    else:
+        return jsonify({"msg": "An user associated with this email has already been created" }),401
