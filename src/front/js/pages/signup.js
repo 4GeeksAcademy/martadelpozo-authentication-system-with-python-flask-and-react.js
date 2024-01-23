@@ -29,7 +29,7 @@ export const Signup = () => {
                             <input value={password} onChange={(e)=>setPassword(e.target.value)} type="password" className="form-control" id="passwordInput" />
                         </div>
                         <Link to="/Account">
-                            <button onClick={sendData} type="submit" className="btn btn-primary">Create account</button>
+                            <button type="submit" className="btn btn-primary">Create account</button>
                         </Link>
                     </form>
                 
