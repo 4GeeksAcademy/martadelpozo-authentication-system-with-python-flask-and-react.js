@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { Context } from "../store/appContext";
+import { Link } from "react-router-dom";
 import "../../styles/home.css";
 
 export const Home = () => {
@@ -7,7 +8,9 @@ export const Home = () => {
 	return (
 		<div className="text-center mt-5">
 			<h1>Welcome!</h1>
-			<p>Login or sign up to get started.</p>
+			<p> 
+			<Link to="/login">Login </Link>
+			 or <Link to="/signup">signup </Link> to get started.</p>
 		</div>
 	);
 };

@@ -1,31 +1,10 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			message: null,
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			],
 			auth: false
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
-			logout: () => {
-				console.log('logout desde flux')
-				setStore({ auth: false });
-				localStorage.removeItem("token");				
-			},
 			login: (email,password) => {
 				console.log('Login desde flux')
 				 const requestOptions = {
@@ -53,6 +32,34 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 			},
 
+			logout: () => {
+				setStore({ auth: false });
+				localStorage.removeItem("token");				
+			},
+
+			signup: (email, password) => {
+				const requestOptions = {
+					method: 'POST',
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(
+						{
+							"email":email,
+							"password":password
+						}
+					)
+				  };
+				  
+				fetch(process.env.BACKEND_URL + "/api/signup", requestOptions)
+					.then(response => {
+						if(response.status == 200){
+							setStore({ auth: true });
+						}
+						return response.text()
+					})
+					.then(result => console.log(result))
+					.catch(error => console.log('error', error));
+			},
+
 			getMessage: async () => {
 				try{
 					// fetching data from the backend
@@ -65,20 +72,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("Error loading message from backend", error)
 				}
 			},
-			changeColor: (index, color) => {
-				//get the store
-				const store = getStore();
-
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
-
-				//reset the global store
-				setStore({ demo: demo });
-			}
 		}
 	};
 };

@@ -3,14 +3,10 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 """
 import os
 from flask import Flask, request, jsonify, url_for, send_from_directory
-from flask_jwt_extended import create_access_token
-from flask_jwt_extended import JWTManager
-from flask_jwt_extended import jwt_required
-from flask_jwt_extended import get_jwt_identity
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
-from api.models import db, User
+from api.models import db
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
@@ -37,8 +33,6 @@ db.init_app(app)
 
 # add the admin
 setup_admin(app)
-app.config['JWT_SECRET_KEY'] = 'marta secret key for this project'  # Change this to a strong and unique secret key
-jwt = JWTManager(app)
 
 # add the admin
 setup_commands(app)
@@ -65,46 +59,13 @@ def sitemap():
 # any other endpoint will try to serve it like a static file
 
 
-@app.route('/user', methods=['GET'])
-@jwt_required()
-def get_user():
-    all_users = User.query.all()
-    print(all_users)
-    results = list(map(lambda user: user.serialize(), all_users))
-    print(results)
-
-    return jsonify(results)
-
-
-# # Create a route to authenticate users on login
-@app.route("/login", methods=["POST"])
-def login():
-    email = request.json.get("email", None)
-    password = request.json.get("password", None)
-
-    # Query the user from the database based on the provided email
-    user = User.query.filter_by(email=email).first()
-
-    if user is None:
-        return jsonify({"msg": "The user does not exist"}), 401
-
-    print(user)
-    print(user.serialize())
-
-    if user.password != password:
-        return jsonify({"msg": "Bad password"}), 401
-
-    access_token = create_access_token(identity=email)
-    return jsonify(access_token=access_token)
-
-# Protect a route with jwt_required, which will kick out requests
-# without a valid JWT present.
-@app.route("/protected", methods=["GET"])
-@jwt_required()
-def protected():
-    # Access the identity of the current user with get_jwt_identity
-    current_user = get_jwt_identity()
-    return jsonify(logged_in_as=current_user), 200
+@app.route('/<path:path>', methods=['GET'])
+def serve_any_other_file(path):
+    if not os.path.isfile(os.path.join(static_file_dir, path)):
+        path = 'index.html'
+    response = send_from_directory(static_file_dir, path)
+    response.cache_control.max_age = 0  # avoid cache memory
+    return response
 
 
 # this only runs if `$ python src/main.py` is executed

@@ -4,7 +4,7 @@ import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
 import { Home } from "./pages/home";
-import { Login } from "./pages/login";
+import  Login from "./pages/login";
 import { Signup } from "./pages/signup";
 import { Account } from "./pages/account";
 import { Demo } from "./pages/demo";
