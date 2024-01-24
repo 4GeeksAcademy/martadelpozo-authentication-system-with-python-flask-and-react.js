@@ -3,6 +3,7 @@ import { Context } from "../store/appContext";
 import "../../styles/home.css";
 
 
+
 export const Account = () => {
 	const { store, actions } = useContext(Context);
 

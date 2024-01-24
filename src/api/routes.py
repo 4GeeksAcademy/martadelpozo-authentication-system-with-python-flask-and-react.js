@@ -8,13 +8,8 @@ from flask_cors import CORS
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
-from flask_jwt_extended import JWTManager
 
 app = Flask(__name__)
-
-# Setup the Flask-JWT-Extended extension
-app.config["JWT_SECRET_KEY"] = "marta my super-secret login lorem ipsum"  # Change this!
-jwt = JWTManager(app)
 
 api = Blueprint('api', __name__)
 
@@ -78,7 +73,7 @@ def signup():
     
 
 # Protect a route with jwt_required, which will kick out requests
-@app.route("/protected", methods=["GET"])
+@api.route("/protected", methods=["GET"])
 @jwt_required()
 def protected():
     # Access the identity of the current user with get_jwt_identity
