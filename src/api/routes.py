@@ -58,7 +58,7 @@ def login():
 #route to let the user signup 
 @api.route("/signup", methods=["POST"])
 def signup():
-    request_body = request.get_jason()
+    request_body = request.get_json()
     user = User.query.filter_by(email=request_body["email"]).first()
     if user is None:
         new_user = User(email=request_body["email"], password=request_body["password"], is_active=True)
